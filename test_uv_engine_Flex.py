@@ -18,8 +18,8 @@ p1,p2 = 25,24 # direction, pulse
 q1,q2 = 16,12 # direction, pulse 
 ir_id = 23
 blue_id = 10
-uv_id = 8
-s = 11
+uv_id = 11
+s = 8
 
 try:
     opt = parser.parse_known_args()[0]
@@ -87,7 +87,7 @@ def motor(d,p1,p2):
         time.sleep(WaitTime)
 
 
-def UV_driver(x,y,uv,p1,p2,q1,q2,l):
+def UV_driver(x,y,uv,blue,ir,p1,p2,q1,q2):
     
     if uv:
         GPIO.output(uv_id,True)
@@ -142,5 +142,5 @@ else:
     blue=False
     
     
-UV_driver(x= opt.x, y=opt.y, uv=uv,ir=ir,blue=blue,p1=p1,p2=p2,q1=q1,q2=q2)
-GPIO.output(11, False)
+UV_driver(x= opt.x, y=opt.y, uv=opt.uv,ir=opt.ir,blue=opt.blue,p1=p1,p2=p2,q1=q1,q2=q2)
+GPIO.output(s, False)
