@@ -6,11 +6,20 @@ import argparse
 # parse the command line
 parser = argparse.ArgumentParser(description="Locate objects in a live camera stream using an object detection DNN.")
 
-parser.add_argument("--LED", type=int, default=1, help="desired height of camera stream (default is 720 pixels)")
 parser.add_argument("--x", type=int, default=0, help="desired height of camera stream (default is 720 pixels)")
 parser.add_argument("--y", type=int, default=0, help="desired height of camera stream (default is 720 pixels)")
-parser.add_argument("--light", type=int, default=0, help="desired height of camera stream (default is 720 pixels)")
+parser.add_argument("--ir", type=int, default=0, help="desired height of camera stream (default is 720 pixels)")
+parser.add_argument("--blue", type=int, default=0, help="desired height of camera stream (default is 720 pixels)")
+parser.add_argument("--uv", type=int, default=0, help="desired height of camera stream (default is 720 pixels)")
 
+
+
+p1,p2 = 25,24 # direction, pulse 
+q1,q2 = 16,12 # direction, pulse 
+ir_id = 23
+blue_id = 10
+uv_id = 8
+s = 11
 
 try:
     opt = parser.parse_known_args()[0]
@@ -46,7 +55,7 @@ GPIO.setup(7,GPIO.OUT)
 GPIO.setup(6,GPIO.OUT)
 GPIO.setup(5,GPIO.OUT)
 
-s = 11
+
 GPIO.output(s, False)
 GPIO.output(11, True)
 
@@ -81,12 +90,29 @@ def motor(d,p1,p2):
 def UV_driver(x,y,uv,p1,p2,q1,q2,l):
     
     if uv:
-        GPIO.output(l,True)
-        print(l,'True')
+        GPIO.output(uv_id,True)
+        print(uv_id,'True')
     else:
-        GPIO.output(l,False)
-        print(l,'False')
+        GPIO.output(uv_id,False)
+        print(uv_id,'False')
 
+    
+    if blue:
+        GPIO.output(blue_id,True)
+        print(blue_id,'True')
+    else:
+        GPIO.output(blue_id,False)
+        print(blue_id,'False')
+        
+    
+    if ir:
+        GPIO.output(ir_id,True)
+        print(ir_id,'True')
+    else:
+        GPIO.output(ir_id,False)
+        print(ir_id,'False')
+        
+        
     if x!=0 or y !=0:
         print('controlling motor...')
         GPIO.output(s, True)
@@ -97,27 +123,24 @@ def UV_driver(x,y,uv,p1,p2,q1,q2,l):
 
 
 ### main code
-if opt.LED==1:
-    p1,p2 = 25,24 # direction, pulse 
-    q1,q2 = 16,12 # direction, pulse 
-    l = 23
-elif opt.LED==2:
-    p1,p2 = 26,19
-    q1,q2 = 21, 20
-    l = 9
-elif opt.LED==3:
-    p1,p2 = 6,13
-    q1,q2 = 5, 22
-    l = 10   
-elif opt.LED==4:
-    p1,p2 = 17,27
-    q1,q2 = 18, 9
-    l = 23 #### to be modifed  
 
-if opt.light:
+
+
+if opt.uv:
     uv=True
 else:
     uv=False
 
-UV_driver(x= opt.x, y=opt.y, uv=uv,p1=p1,p2=p2,q1=q1,q2=q2,l=l)
+if opt.ir:
+    ir=True
+else:
+    ir=False
+    
+if opt.blue:
+    blue=True
+else:
+    blue=False
+    
+    
+UV_driver(x= opt.x, y=opt.y, uv=uv,ir=ir,blue=blue,p1=p1,p2=p2,q1=q1,q2=q2)
 GPIO.output(11, False)
