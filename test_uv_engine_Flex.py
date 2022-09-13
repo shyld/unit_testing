@@ -56,8 +56,7 @@ GPIO.setup(6,GPIO.OUT)
 GPIO.setup(5,GPIO.OUT)
 
 
-GPIO.output(s, False)
-GPIO.output(11, True)
+GPIO.output(s, True)
 
 
 #GPIO.output(21, False)
