@@ -2,6 +2,7 @@ import time
 import RPi.GPIO as GPIO
 #import RPi.GPIO as GPIO
 import argparse 
+import sys
 
 # parse the command line
 parser = argparse.ArgumentParser(description="Locate objects in a live camera stream using an object detection DNN.")
@@ -11,6 +12,7 @@ parser.add_argument("--y", type=int, default=0, help="desired height of camera s
 parser.add_argument("--ir", type=int, default=0, help="desired height of camera stream (default is 720 pixels)")
 parser.add_argument("--blue", type=int, default=0, help="desired height of camera stream (default is 720 pixels)")
 parser.add_argument("--uv", type=int, default=0, help="desired height of camera stream (default is 720 pixels)")
+parser.add_argument("--tof", type=int, default=0, help="desired height of camera stream (default is 720 pixels)")
 
 
 
@@ -20,6 +22,7 @@ ir_id = 23
 blue_id = 10
 uv_id = 11
 s = 8
+tof_pin = 6
 
 try:
     opt = parser.parse_known_args()[0]
@@ -140,6 +143,12 @@ if opt.blue:
 else:
     blue=False
     
+if opt.tof:
+    GPIO.output(tof_pin, True)
+    print('TOF: ON')
+else:
+    GPIO.output(tof_pin, False)
+    print('TOF: OFF')
     
 UV_driver(x= opt.x, y=opt.y, uv=opt.uv,ir=opt.ir,blue=opt.blue,p1=p1,p2=p2,q1=q1,q2=q2)
 GPIO.output(s, False)
