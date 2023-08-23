@@ -6,12 +6,12 @@ import datetime
 #import torch
 #import torchvision
 
-width = 600#3280
-height = 400#2464
+width = 3280
+height = 2464
 rate = 5
 
 def gstreamer_pipeline(
-    sensor_id=0,
+    sensor_id=1,
     #ensor_mode=3,
     capture_width=width,
     capture_height=height,
@@ -40,14 +40,15 @@ def gstreamer_pipeline(
             display_height,
         )
     )
+camera_id = 0 #IR
+camera_id = 1 #RGB
+cap = cv2.VideoCapture(gstreamer_pipeline(sensor_id=camera_id), cv2.CAP_GSTREAMER)
 
-cap = cv2.VideoCapture(gstreamer_pipeline(sensor_id=0), cv2.CAP_GSTREAMER)
 
-
-fourcc = cv2.VideoWriter_fourcc(*"MP4V")
+fourcc = cv2.VideoWriter_fourcc(*"mp4v")
 
 timestr = time.strftime("%m_%d_%Y_%H%M%S")
-writer = cv2.VideoWriter(timestr+'.mp4', fourcc, rate, (width, height), True)
+#writer = cv2.VideoWriter(timestr+'.mp4', fourcc, rate, (width, height), True)
 
 #model1 = torchvision.models.detection.keypointrcnn_resnet50_fpn(pretrained=True)
 #model1 = model1.eval().cuda()
@@ -56,8 +57,17 @@ writer = cv2.VideoWriter(timestr+'.mp4', fourcc, rate, (width, height), True)
 if cap.isOpened():
     print('cap open')
 
-    for i in range(500):
+    for i in range(5000):
         ret_val, img = cap.read()
+        
+        scale_percent = 20 # percent of original size
+        width = int(img.shape[1] * scale_percent / 100)
+        height = int(img.shape[0] * scale_percent / 100)
+        dim = (width, height)
+
+        # resize image
+        img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
+
         #img = np.array(img)
         #img = FaceDetection.detector(img, model1)
 
@@ -67,6 +77,6 @@ if cap.isOpened():
         if cv2.waitKey(40) == 27:
             break
 
-writer.release()
+#writer.release()
 cap.release()
 print('video saved')
